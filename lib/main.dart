@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:materialdesign3example/colors_schemas.dart';
 
+final themeMode = ValueNotifier(ThemeMode.light);
+
 void main() {
   runApp(const MyApp());
 }
@@ -11,13 +13,23 @@ class MyApp extends StatelessWidget {
   // funciona a partir do flutter 3.0
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: darkColorScheme,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeMode,
+      builder: (context, value, child) {
+        return MaterialApp(
+          title: 'Flutter Demo',
+          themeMode: value,
+          theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: lightColorScheme,
+          ),
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            colorScheme: darkColorScheme,
+          ),
+          home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        );
+      },
     );
   }
 }
@@ -47,6 +59,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          Switch(value: themeMode.value == ThemeMode.dark, onChanged: (isDark){
+            themeMode.value = isDark ? ThemeMode.dark : ThemeMode.light;
+          })
+        ],
       ),
       body: Center(
         child: Padding(
@@ -78,6 +95,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               ),
+              const SizedBox(
+                height: 10,
+              ),
+              ElevatedButton(onPressed: () {}, child: const Text('button'))
             ],
           ),
         ),
